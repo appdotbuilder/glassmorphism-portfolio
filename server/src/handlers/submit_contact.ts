@@ -1,17 +1,10 @@
 
 import { type ContactFormInput, type ContactFormResponse } from '../schema';
 import { db } from '../db';
-import { contactSubmissionsTable, rateLimitsTable } from '../db/schema';
+import { contactSubmissionsTable } from '../db/schema';
 import { eq, and, gte } from 'drizzle-orm';
 
 export async function submitContact(input: ContactFormInput, ipAddress: string): Promise<ContactFormResponse> {
-  // This is a placeholder implementation! Real code should be implemented here.
-  // The goal of this handler is to:
-  // 1. Check rate limiting for the IP address (max 5 requests per 5 minutes)
-  // 2. Save the contact submission to the database
-  // 3. Send email notification using transactional email service (SendGrid/Mailgun)
-  // 4. Return success/error response
-  
   try {
     // Rate limiting check - count requests from this IP in last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -23,7 +16,8 @@ export async function submitContact(input: ContactFormInput, ipAddress: string):
           eq(contactSubmissionsTable.ip_address, ipAddress),
           gte(contactSubmissionsTable.created_at, fiveMinutesAgo)
         )
-      );
+      )
+      .execute();
 
     if (recentSubmissions.length >= 5) {
       return {
@@ -42,7 +36,8 @@ export async function submitContact(input: ContactFormInput, ipAddress: string):
         ip_address: ipAddress,
         status: 'pending'
       })
-      .returning();
+      .returning()
+      .execute();
 
     // TODO: Implement email sending using transactional email service
     // Example with SendGrid:

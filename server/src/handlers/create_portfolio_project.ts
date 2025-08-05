@@ -4,12 +4,6 @@ import { db } from '../db';
 import { portfolioProjectsTable } from '../db/schema';
 
 export async function createPortfolioProject(input: CreateProjectInput): Promise<PortfolioProject> {
-  // This is a placeholder implementation! Real code should be implemented here.
-  // The goal of this handler is to:
-  // 1. Validate the input data
-  // 2. Create a new portfolio project in the database
-  // 3. Return the created project with generated ID and timestamps
-  
   try {
     const [project] = await db
       .insert(portfolioProjectsTable)
@@ -18,8 +12,8 @@ export async function createPortfolioProject(input: CreateProjectInput): Promise
         description: input.description,
         type: input.type,
         hero_image_url: input.hero_image_url,
-        gallery_images: input.gallery_images || [],
-        tools_used: input.tools_used || [],
+        gallery_images: input.gallery_images,
+        tools_used: input.tools_used,
         role: input.role || null,
         problem: input.problem || null,
         solution: input.solution || null,
@@ -28,12 +22,6 @@ export async function createPortfolioProject(input: CreateProjectInput): Promise
         sort_order: input.sort_order
       })
       .returning();
-
-    console.log('Created new portfolio project:', {
-      id: project.id,
-      title: input.title,
-      type: input.type
-    });
 
     // Convert database types to schema types
     return {
@@ -56,6 +44,6 @@ export async function createPortfolioProject(input: CreateProjectInput): Promise
 
   } catch (error) {
     console.error('Error creating portfolio project:', error);
-    throw new Error('Failed to create portfolio project');
+    throw error;
   }
 }

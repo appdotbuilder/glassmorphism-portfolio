@@ -4,12 +4,6 @@ import { db } from '../db';
 import { testimonialsTable } from '../db/schema';
 
 export async function createTestimonial(input: CreateTestimonialInput): Promise<Testimonial> {
-  // This is a placeholder implementation! Real code should be implemented here.
-  // The goal of this handler is to:
-  // 1. Validate the input data
-  // 2. Create a new testimonial in the database
-  // 3. Return the created testimonial with generated ID and timestamp
-  
   try {
     const [testimonial] = await db
       .insert(testimonialsTable)
@@ -47,6 +41,6 @@ export async function createTestimonial(input: CreateTestimonialInput): Promise<
 
   } catch (error) {
     console.error('Error creating testimonial:', error);
-    throw new Error('Failed to create testimonial');
+    throw error;
   }
 }
